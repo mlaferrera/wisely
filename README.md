@@ -33,6 +33,8 @@ Let's get familar with some basic terms required for the configuration:
  - **crypto_id**: KMS key name within the specified keyring
  - **location_id**: Google Cloud zone the keyring is located in
  - **bucket_name**: GCS bucket name to store secrets
+   **mode**: Method used to parsed secrets. Valid options are kv, json, or raw
+   **delim**: Delimiter for key/values when in mode kv
 
     wisley.cfg
     ----------
@@ -46,6 +48,8 @@ Let's get familar with some basic terms required for the configuration:
         crypto_id = the_key
         location_id = us-west1-a
         bucket_name = sooper-secret-bucket-12312321
+        mode = kv
+        delim = :
 
     If the `[global]` configuration section exists, wisley will load those first. For
     instance, if there is a shared `project_id` across all of your secrets, you may
@@ -74,12 +78,12 @@ Let's get familar with some basic terms required for the configuration:
     If no configuration options are defined, wisely will attempt to gather the
     required configuration options from environment variables:
 
-        PROJECT_ID=my_google_project-10234
-        SECRET_PATH=secrets.txt
-        KEYRING_ID=my_soooper_keyring
-        CRYPTO_ID=the_key
-        LOCATION_ID=us-east1-a
-        BUCKET_NAME=sooper-secret-bucket-12312321
+        WISELY_PROJECT_ID=my_google_project-10234
+        WISELY_SECRET_PATH=secrets.txt
+        WISELY_KEYRING_ID=my_soooper_keyring
+        WISELY_CRYPTO_ID=the_key
+        WISELY_LOCATION_ID=us-east1-a
+        WISELY_BUCKET_NAME=sooper-secret-bucket-12312321
 
 
 ## Adding/Updating Secret Configuration
@@ -97,7 +101,8 @@ updating the bucket name, simply add the `--update` argument:
 
 ## Adding Secrets
 
-A secrets file should be a key value pair, or a valid json blob.
+A secrets file can be plaintext, key/value pairs, or json. By default, wisely will
+assume that the mode is a key/value pair.
 
 For example:
 
@@ -108,8 +113,7 @@ Or, if json:
 
         {'USER': 'joebob', 'PASS': 'soopersecret321'}
 
-If the content of the secrets file cannot be parsed properly, the raw decrypted
-content will be returned.
+The secrets file may also be plaintext, which will not be parsed in any way by wisely.
 
 To add a new secret, simply run:
 
@@ -134,10 +138,12 @@ detailed above as environment variables:
         crypto_id = 'the_key'
         location = 'us-west1-a'
         bucket_name = 'sooper-secret-bucket-12312321'
+        mode = 'json'
 
         wise = Wisley(
             project_id=project_id, secret_path=secret_path, keyring_id=keyring_id,
-            crypto_id=crypto_id, location=location, bucket_name=bucket_name)
+            crypto_id=crypto_id, location=location, bucket_name=bucket_name,
+            mode=mode)
 
         secrets = wise.decrypt()
 

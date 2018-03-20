@@ -4,6 +4,7 @@ Wisely - Simple Secrets Store
 
 """
 
+import os
 import json
 import logging
 import configparser
@@ -19,7 +20,7 @@ CONFIG = "{}/.wisely".format(str(Path.home()))
 
 class Wisely:
 
-    def __init__(self, secret=None, configfile=None, settings={}, outfile=None, source=None):
+    def __init__(self, secret=None, configfile=None, settings={}, outfile=None, source=None, mode='kv', delim='='):
         """
         Wisely
 
@@ -28,34 +29,46 @@ class Wisely:
         :param dict settings: (optional) Settings defining required attributes
         :param str outfile: (optional) Local file to save encrypted/decrypted content to
         :param str source: (optional) Local source file to encrypted/decrypt
+        :param str mode: (Default: kv) Format to return data. (json, kv, raw)
+        :param str delim: Delimiter when splitting secrets in key/value mode
 
         """
         self.secret = secret
         self.settings = settings
         self.outfile = outfile
         self.configfile = configfile
-        self.settings['source'] = source
+        self.source = source
+        self.mode = mode
+        self.delim = delim
 
-        if self.secret:
-            self.load_config()
+        self.load_config()
 
     def load_config(self):
         """
         Load wisely configuration file
 
         """
-        self.parsed_config = configparser.ConfigParser()
-        self.parsed_config.read(self.configfile)
+        if self.configfile:
+            self.parsed_config = configparser.ConfigParser()
+            self.parsed_config.read(self.configfile)
 
-        if 'global' in self.parsed_config:
-            for opt in self.parsed_config.options('global'):
-                self.settings[opt] = self.parsed_config.get('global', opt)
+            if 'global' in self.parsed_config:
+                for opt in self.parsed_config.options('global'):
+                    self.settings[opt] = self.parsed_config.get('global', opt)
 
-        try:
-            for opt in self.parsed_config.options(self.secret):
-                self.settings[opt] = self.parsed_config.get(self.secret, opt)
-        except configparser.NoSectionError:
-            pass
+            try:
+                for opt in self.parsed_config.options(self.secret):
+                    self.settings[opt] = self.parsed_config.get(self.secret, opt)
+            except configparser.NoSectionError:
+                pass
+
+        else:
+            self.settings['secret_path'] = os.getenv('WISELY_SECRET_PATH')
+            self.settings['crypto_id'] = os.getenv('WISELY_CRYPTO_ID')
+            self.settings['project_id'] = os.getenv('WISELY_PROJECT_ID')
+            self.settings['bucket_name'] = os.getenv('WISELY_BUCKET_NAME')
+            self.settings['keyring_id'] = os.getenv('WISELY_KEYRING_ID')
+            self.settings['location_id'] = os.getenv('WISELY_LOCATION_ID')
 
     def save_config(self):
         """
@@ -93,7 +106,7 @@ class Wisely:
         """
         Save content to a local file
 
-        :param str content: Content to be locally saved
+        :param content: Content to be locally saved
 
         """
         with open(self.outfile, 'x') as outfile:
@@ -104,28 +117,28 @@ class Wisely:
         Decryption handler
 
         """
+        ciphertext = None
+
         self.cipher = Cipher(**self.settings)
-        cleartext = self.cipher.decrypt()
+
+        if self.source:
+            with open(self.source, 'rb') as content:
+                ciphertext = content.read()
+
+        cleartext = self.cipher.decrypt(ciphertext)
         secrets = None
 
         if self.outfile:
             self.save(cleartext)
 
-        try:
+        if self.mode == 'json':
             secrets = json.loads(cleartext)
-        except json.decoder.JSONDecodeError:
-            pass
-
-        if not secrets:
-            try:
-                secrets = {}
-                for line in cleartext.splitlines():
-                    key, value = line.split('=', 1)
-                    secrets[key.strip()] = value.strip()
-            except ValueError:
-                log.warn("Unable to parse line: {}".format(line))
-
-        if not secrets:
+        if self.mode == 'kv':
+            secrets = {}
+            for line in cleartext.splitlines():
+                key, value = line.split(self.delim, 1)
+                secrets[key.strip()] = value.strip()
+        elif self.mode == 'raw':
             secrets = cleartext
 
         return secrets
@@ -135,8 +148,12 @@ class Wisely:
         Encryption handler
 
         """
+
+        with open(self.source, 'r') as content:
+            plaintext = content.read()
+
         self.cipher = Cipher(**self.settings)
-        ciphertext = self.cipher.encrypt()
+        ciphertext = self.cipher.encrypt(plaintext)
 
         if self.outfile:
             self.save(ciphertext)

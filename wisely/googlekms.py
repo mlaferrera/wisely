@@ -30,31 +30,15 @@ class Cipher:
         :param str project_id: Google Cloud project ID
         :param str bucket_name: (optional) Google Cloud Storage bucket name
         :param str secret_path: Path to encrypted file in GCS
-        :param str source: (optional) Local source file to encrypt/decrypt
 
         """
 
-        self.cipherfile = settings.get('secret_path', os.getenv('SECRET_PATH'))
-        self.crypto_id = settings.get('crypto_id', os.getenv('CRYPTO_ID'))
-        self.project_id = settings.get('project_id', os.getenv('PROJECT_ID'))
-        self.bucket_name = settings.get('bucket_name', os.getenv('BUCKET_NAME'))
-        self.keyring_id = settings.get('keyring_id', os.getenv('KEYRING_ID'))
-        self.location_id = settings.get('location_id', os.getenv('LOCATION_ID'))
-        self.source = settings.get('source', None)
-
-        # This is really ugly, but it works so moving on for now.
-        # Define the minimally required parameters for the encryp/decrypt
-        # functions to operate
-        required = [self.crypto_id, self.project_id, self.keyring_id, self.location_id]
-
-        # Ensure that required parameters contain something
-        if all(r is (not '' and not None) for r in required):
-            log.error(
-                'Incomplete configuration: secret_path={}, crypto_id={}, project_id={}, '
-                'bucket_name={}, keyring_id={}, location_id={}, source={}'.format(
-                    self.cipherfile, self.crypto_id, self.project_id,
-                    self.bucket_name, self.keyring_id, self.location_id, self.source))
-            return
+        self.cipherfile = settings.get('secret_path')
+        self.crypto_id = settings.get('crypto_id')
+        self.project_id = settings.get('project_id')
+        self.bucket_name = settings.get('bucket_name')
+        self.keyring_id = settings.get('keyring_id')
+        self.location_id = settings.get('location_id')
 
         # Creates an API client for the KMS API.
         self.kms_client = googleapiclient.discovery.build('cloudkms', 'v1')
@@ -67,16 +51,13 @@ class Cipher:
             self.gcs_client = self._get_storage_client()
             self.bucket = self.gcs_client.bucket(self.bucket_name)
 
-    def decrypt(self):
+    def decrypt(self, ciphertext=None):
         """
         Decrypt encrypted file in GCS
 
         """
 
-        if self.source:
-            with open(self.source, 'r') as content:
-                ciphertext = content.read()
-        else:
+        if not ciphertext:
             # Read encrypted data from the input file.
             ciphertext = self.download_file()
 
@@ -90,16 +71,12 @@ class Cipher:
 
         return base64.b64decode(response['plaintext'].encode('ascii')).decode()
 
-    def encrypt(self):
+    def encrypt(self, plaintext):
         """
         Encrypts data from plaintext to ciphertext using KMS and push
         ciphertext to GCS
 
         """
-
-        # Read data from the input file.
-        with io.open(self.source, 'rb') as plaintext_file:
-            plaintext = plaintext_file.read()
 
         # Use the KMS API to encrypt the data.
         crypto_keys = self.kms_client.projects().locations().keyRings().cryptoKeys()
