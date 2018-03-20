@@ -1,0 +1,11 @@
+[global]
+project_id = my_gcp_project123
+
+[secret1]
+secret_path = secret2.txt
+crypto_id = keyname
+bucket_name = bucknell
+keyring_id = keyring
+location_id = us-west1-a
+
+
