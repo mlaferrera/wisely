@@ -1,4 +1,4 @@
-## wisely -- simple secrets store for Google Cloud
+## wisely - simple secrets store for Google Cloud
 
 # Overview
 
