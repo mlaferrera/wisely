@@ -127,8 +127,8 @@ GCS bucket. If you want to update the encrypted secrets file:
 ## Using in scripts
 
 Using wisely in scripts is extremely easy. There are two ways to instantiate `Wisley`.
-You can either pass all of the required configuration options, or define them as
-detailed above as environment variables:
+
+You can either pass all of the required configuration options:
 
         from wisely import Wisely
 
@@ -145,6 +145,18 @@ detailed above as environment variables:
             crypto_id=crypto_id, location=location, bucket_name=bucket_name,
             mode=mode)
 
+        secrets = wise.decrypt()
+
+        user = secrets['USER']
+        pass = secrets['PASS']
+
+        print('User: {}, Pass: {}'.format(user, pass))
+
+Or, if all enviroment variables are properly defined:
+
+        from wisely import Wisely
+
+        wise = Wisely()
         secrets = wise.decrypt()
 
         user = secrets['USER']
