@@ -106,7 +106,7 @@ For example:
 
 Or, if json:
 
-        {'USER': 'joebob', 'PASS': 'soopersecret321'}
+        {"USER": "joebob", "PASS": "soopersecret321"}
 
 If the content of the secrets file cannot be parsed properly, the raw decrypted
 content will be returned.
