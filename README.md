@@ -111,7 +111,7 @@ For example:
 
 Or, if json:
 
-        {'USER': 'joebob', 'PASS': 'soopersecret321'}
+        {"USER": "joebob", "PASS": "soopersecret321"}
 
 The secrets file may also be plaintext, which will not be parsed in any way by wisely.
 
