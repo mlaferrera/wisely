@@ -38,8 +38,8 @@ class Wisely:
         self.outfile = outfile
         self.configfile = configfile
         self.source = source
-        self.mode = mode
-        self.delim = delim
+        self.settings['mode'] = mode
+        self.settings['delim'] = delim
 
         self.load_config()
 
@@ -131,14 +131,14 @@ class Wisely:
         if self.outfile:
             self.save(cleartext)
 
-        if self.mode == 'json':
+        if self.settings['mode'] == 'json':
             secrets = json.loads(cleartext)
-        if self.mode == 'kv':
+        elif self.settings['mode'] == 'kv':
             secrets = {}
             for line in cleartext.splitlines():
-                key, value = line.split(self.delim, 1)
+                key, value = line.split(self.settings['delim'], 1)
                 secrets[key.strip()] = value.strip()
-        elif self.mode == 'raw':
+        elif self.settings['mode'] == 'raw':
             secrets = cleartext
 
         return secrets
@@ -149,7 +149,7 @@ class Wisely:
 
         """
 
-        with open(self.source, 'r') as content:
+        with open(self.source, 'rb') as content:
             plaintext = content.read()
 
         self.cipher = Cipher(**self.settings)

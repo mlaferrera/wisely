@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='wisely',
-    version='0.2',
+    version='0.3',
     description='Simple secrets store for Google Cloud',
     url='https://github.com/mlaferrera/wisely',
     author='Marcus LaFerrera',
