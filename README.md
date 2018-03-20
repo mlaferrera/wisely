@@ -22,8 +22,8 @@ Install the latest from master (no guarantees this won't break anything):
 ## Configuration
 
 Wisley requires a simple configuration before you get started. For the sake of,
-simplcity, this documentation assumes that you have already [created a GCS bucket] (https://cloud.google.com/storage/docs/creating-buckets)
-for secret storage, and have also [created a KMS keyring and key] (https://cloud.google.com/kms/docs/creating-keys).
+simplcity, this documentation assumes that you have already [created a GCS bucket](https://cloud.google.com/storage/docs/creating-buckets)
+for secret storage, and have also [created a KMS keyring and key](https://cloud.google.com/kms/docs/creating-keys).
 
 Let's get familar with some basic terms required for the configuration:
 
