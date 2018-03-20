@@ -9,12 +9,13 @@ import logging
 import configparser
 
 from argparse import RawDescriptionHelpFormatter, ArgumentParser
+from pathlib import Path
 
 from wisely.googlekms import Cipher
 
 log = logging.getLogger(__name__)
 
-CONFIG = '~/.wisely'
+CONFIG = "{}/.wisely".format(str(Path.home()))
 
 class Wisely:
 
@@ -162,7 +163,7 @@ def main():
     config = subparsers.add_parser('config')
     config.add_argument('secret', help='Unique Secret Name')
     config.add_argument('-c', '--config', dest='config', default=CONFIG, help='wisley configuration file')
-    config.add_argument('--update', dest='update', help='Update configuration')
+    config.add_argument('--update', dest='update', action='store_true', help='Update configuration')
     config.add_argument('--path', dest='path', help='Path encrypted content should be saved to in GCS')
     config.add_argument('--crypto', dest='crypto', default=None, help='Crypto Key')
     config.add_argument('--project', dest='project', default=None, help='Google Cloud project ID')
