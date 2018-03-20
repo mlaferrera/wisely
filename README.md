@@ -33,7 +33,7 @@ Let's get familar with some basic terms required for the configuration:
  - **crypto_id**: KMS key name within the specified keyring
  - **location_id**: Google Cloud zone the keyring is located in
  - **bucket_name**: GCS bucket name to store secrets
-   **mode**: Method used to parsed secrets. Valid options are kv, json, or raw
+   **mode**: Method used to parse secrets. Valid options are kv, json, or raw
    **delim**: Delimiter for key/values when in mode kv
 
     wisley.cfg
