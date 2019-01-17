@@ -26,7 +26,7 @@ setup(
         'Intended Audience :: System Administrators',
         'Topic :: Security',
         'Topic :: Utilities',
-        'License :: OSI Approved :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
