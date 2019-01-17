@@ -18,8 +18,8 @@ from google.cloud import storage
 
 log = logging.getLogger(__name__)
 
-class Cipher:
 
+class Cipher:
     def __init__(self, **settings):
         """
         Decrypts content of file using KMS from GCS and saves it locally.
@@ -41,11 +41,14 @@ class Cipher:
         self.location_id = settings.get('location_id')
 
         # Creates an API client for the KMS API.
-        self.kms_client = googleapiclient.discovery.build('cloudkms', 'v1')
+        self.kms_client = googleapiclient.discovery.build(
+            'cloudkms', 'v1', cache_discovery=False
+        )
 
         # The resource name of the CryptoKey.
         self.key_name = 'projects/{}/locations/{}/keyRings/{}/cryptoKeys/{}'.format(
-            self.project_id, self.location_id, self.keyring_id, self.crypto_id)
+            self.project_id, self.location_id, self.keyring_id, self.crypto_id
+        )
 
         if self.bucket_name:
             self.gcs_client = self._get_storage_client()
@@ -65,7 +68,7 @@ class Cipher:
         crypto_keys = self.kms_client.projects().locations().keyRings().cryptoKeys()
         request = crypto_keys.decrypt(
             name=self.key_name,
-            body={'ciphertext': base64.b64encode(ciphertext).decode('ascii')}
+            body={'ciphertext': base64.b64encode(ciphertext).decode('ascii')},
         )
         response = request.execute()
 
@@ -82,7 +85,8 @@ class Cipher:
         crypto_keys = self.kms_client.projects().locations().keyRings().cryptoKeys()
         request = crypto_keys.encrypt(
             name=self.key_name,
-            body={'plaintext': base64.b64encode(plaintext).decode('ascii')})
+            body={'plaintext': base64.b64encode(plaintext).decode('ascii')},
+        )
         response = request.execute()
 
         return base64.b64decode(response['ciphertext'].encode('ascii'))

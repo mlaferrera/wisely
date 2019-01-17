@@ -1,4 +1,4 @@
-## wisely - simple secrets store for Google Cloud
+## wisely - simple secrets store for Google Cloud KMS
 
 # Overview
 
@@ -9,13 +9,7 @@ readily available as a `dict()` within Python.
 
 # Installation
 
-Install from pip:
-
-    pip install wisely
-
-Install the latest from master (no guarantees this won't break anything):
-
-    pip install https://github.com/mlaferrera/wisely
+    pip3 install wisely
 
 # Usage
 
@@ -27,64 +21,66 @@ for secret storage, and have also [created a KMS keyring and key](https://cloud.
 
 Let's get familar with some basic terms required for the configuration:
 
- - **project_id**: Google Cloud project ID
- - **secret_path**: Filename of secret file in GCS
- - **keyring_id**: KMS keyring name
- - **crypto_id**: KMS key name within the specified keyring
- - **location_id**: Google Cloud zone the keyring is located in
- - **bucket_name**: GCS bucket name to store secrets
- - **mode**: Method used to parse secrets. Valid options are kv, json, or raw
- - **delim**: Delimiter for key/values when in mode kv
+- **project_id**: Google Cloud project ID
+- **secret_path**: Filename of secret file in GCS
+- **keyring_id**: KMS keyring name
+- **crypto_id**: KMS key name within the specified keyring
+- **location_id**: Google Cloud zone the keyring is located in
+- **bucket_name**: GCS bucket name to store secrets
+- **mode**: Method used to parse secrets. Valid options are kv, json, or raw
+- **delim**: Delimiter for key/values when in mode kv
 
-    wisley.cfg
-    ----------
-    The wisely configuration file is a simple `yaml` file. By default, wisely will
-    look for the configuration file in `~/.wisley`. The basic construct is:
+  wisley.cfg
 
-        [secret_name]
-        project_id = my_google_project-10234
-        secret_path = secrets.txt
-        keyring_id = my_soooper_keyring
-        crypto_id = the_key
-        location_id = us-west1-a
-        bucket_name = sooper-secret-bucket-12312321
-        mode = kv
-        delim = :
+  ***
 
-    If the `[global]` configuration section exists, wisley will load those first. For
-    instance, if there is a shared `project_id` across all of your secrets, you may
-    want to define `project_id` in `[global]`:
+  The wisely configuration file is a simple `yaml` file. By default, wisely will
+  look for the configuration file in `~/.wisley`. The basic construct is:
 
-            [global]
-            project_id = my_google_project-10234
+       [secret_name]
+       project_id = my_google_project-10234
+       secret_path = secrets.txt
+       keyring_id = my_soooper_keyring
+       crypto_id = the_key
+       location_id = us-west1-a
+       bucket_name = sooper-secret-bucket-12312321
+       mode = kv
+       delim = :
 
-            [secret_name_one]
-            secret_path = secrets-one.txt
-            keyring_id = my_soooper_keyring
-            crypto_id = the_key_one
-            location_id = us-west1-a
-            bucket_name = sooper-secret-bucket-12312321
+  If the `[global]` configuration section exists, wisley will load those first. For
+  instance, if there is a shared `project_id` across all of your secrets, you may
+  want to define `project_id` in `[global]`:
 
-            [secret_name_two]
-            secret_path = secrets-two.txt
-            keyring_id = my_soooper_keyring
-            crypto_id = the_key_two
-            location_id = us-west1-a
-            bucket_name = sooper-secret-bucket-12312321
+           [global]
+           project_id = my_google_project-10234
 
-    Environment Variables
-    ---------------------
+           [secret_name_one]
+           secret_path = secrets-one.txt
+           keyring_id = my_soooper_keyring
+           crypto_id = the_key_one
+           location_id = us-west1-a
+           bucket_name = sooper-secret-bucket-12312321
 
-    If no configuration options are defined, wisely will attempt to gather the
-    required configuration options from environment variables:
+           [secret_name_two]
+           secret_path = secrets-two.txt
+           keyring_id = my_soooper_keyring
+           crypto_id = the_key_two
+           location_id = us-west1-a
+           bucket_name = sooper-secret-bucket-12312321
 
-        WISELY_PROJECT_ID=my_google_project-10234
-        WISELY_SECRET_PATH=secrets.txt
-        WISELY_KEYRING_ID=my_soooper_keyring
-        WISELY_CRYPTO_ID=the_key
-        WISELY_LOCATION_ID=us-east1-a
-        WISELY_BUCKET_NAME=sooper-secret-bucket-12312321
+  Environment Variables
 
+  ***
+
+  If no configuration options are defined, wisely will attempt to gather the
+  required configuration options from environment variables:
+
+       WISELY_PROJECT_ID=my_google_project-10234
+       WISELY_SECRET_PATH=secrets.txt
+       WISELY_KEYRING_ID=my_soooper_keyring
+       WISELY_CRYPTO_ID=the_key
+       WISELY_LOCATION_ID=us-east1-a
+       WISELY_BUCKET_NAME=sooper-secret-bucket-12312321
 
 ## Adding/Updating Secret Configuration
 
