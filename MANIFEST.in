@@ -1,0 +1,4 @@
+graft wisely
+include requirements.txt
+include README.md
+global-exclude __pycache__ *.pyc
