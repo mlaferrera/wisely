@@ -63,12 +63,18 @@ class Wisely:
                 pass
 
         else:
-            self.settings['secret_path'] = os.getenv('WISELY_SECRET_PATH')
-            self.settings['crypto_id'] = os.getenv('WISELY_CRYPTO_ID')
-            self.settings['project_id'] = os.getenv('WISELY_PROJECT_ID')
-            self.settings['bucket_name'] = os.getenv('WISELY_BUCKET_NAME')
-            self.settings['keyring_id'] = os.getenv('WISELY_KEYRING_ID')
-            self.settings['location_id'] = os.getenv('WISELY_LOCATION_ID')
+            self.settings['secret_path'] = os.getenv(
+                'WISELY_SECRET_PATH') or self.settings['secret_path']
+            self.settings['crypto_id'] = os.getenv(
+                'WISELY_CRYPTO_ID') or self.settings['crypto_id']
+            self.settings['project_id'] = os.getenv(
+                'WISELY_PROJECT_ID') or self.settings['project_id']
+            self.settings['bucket_name'] = os.getenv(
+                'WISELY_BUCKET_NAME') or self.settings['bucket_name']
+            self.settings['keyring_id'] = os.getenv(
+                'WISELY_KEYRING_ID') or self.settings['keyring_id']
+            self.settings['location_id'] = os.getenv(
+                'WISELY_LOCATION_ID') or self.settings['location_id']
 
     def save_config(self):
         """
