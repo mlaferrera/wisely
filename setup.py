@@ -19,7 +19,7 @@ setup(
         "google-api-python-client~=1.7.7",
         "google-cloud-storage>=1.13.2,<1.17.0",
         "google-auth-httplib2~=0.0.3",
-        "google-auth~=1.6.2",
+        "google-auth>=1.6.2,<1.10.0",
     ],
     python_requires='>=3.5',
     license='MIT',
