@@ -16,7 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "python-magic~=0.4.15",
-        "google-api-python-client~=1.7.7",
+        "google-api-python-client>=1.7.7,<1.9.0",
         "google-cloud-storage>=1.13.2,<1.17.0",
         "google-auth-httplib2~=0.0.3",
         "google-auth~=1.6.2",
